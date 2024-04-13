@@ -52,7 +52,7 @@ class PickerData<T> {
       itemDisplayList.indexOf(displayName);
 }
 
-mixin  PickerSetupMixin<T> {
+mixin PickerSetupMixin<T> {
   double getTotalSpace({int? maxItem});
   void setupController();
   void generatePickData();
@@ -65,8 +65,15 @@ typedef PickerChildBuilder = Widget Function(
 abstract class Picker<T> extends StatefulWidget with PickerSetupMixin<T> {
   final MainAxisAlignment mainAxisAlignment;
   final T initValue;
+
+  /// The unit of the picker.
   final String? unit;
+
+  /// The background color of the picker.
+  /// Default use Theme.of(context).dialogBackgroundColor
   final Color? bgColor;
+
+  /// The height of each item in the picker.
   final double? itemExtent;
   final double paddingAll;
   final bool reverse;
@@ -135,7 +142,8 @@ class _PickerState<T> extends State<Picker<T>> {
     return CupertinoPicker(
       useMagnifier: true,
       magnification: 1.0,
-      backgroundColor: widget.bgColor ?? Theme.of(context).backgroundColor,
+      backgroundColor:
+          widget.bgColor ?? Theme.of(context).dialogBackgroundColor,
       itemExtent: widget.itemExtent!,
       onSelectedItemChanged: (int index) {
         selectIndex = index;

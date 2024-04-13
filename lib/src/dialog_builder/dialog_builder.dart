@@ -149,7 +149,8 @@ abstract class BaseDialogBuilder {
 final keyCache = <Key>{};
 
 extension CustomersDialog on DialogStyle {
-  /// If [key] !=null or [child] has a key, it will be cached, and the same key will not be displayed repeatedly
+  /// If [key] !=null or [child] has a key,
+  /// it will be cached, and the same key will not be displayed repeatedly
   Future<T?> show<T>(
       {required context,
       required Widget child,
@@ -175,6 +176,34 @@ extension CustomersDialog on DialogStyle {
       ..setMaxRatio(maxRatio ?? 0.8)
       ..setShape(shape);
     return await builder.show<T>(dialogStyle: this);
+  }
+
+  /// If [key] !=null or [child] has a key,
+  /// it will be cached, and the same key will not be displayed repeatedly
+  Future<T?> showAsSingleton<T>(
+      {required context,
+      required Widget child,
+      required Key? key,
+      double? dialogHeight,
+      double? dialogWidth,
+      String? dialogTitle,
+      Color? bgColor,
+      ShapeBorder? shape,
+      double? maxRatio,
+      bool? enableDrag,
+      bool? barrierDismissible}) async {
+    return await show<T>(
+        context: context,
+        child: child,
+        key: key,
+        dialogHeight: dialogHeight,
+        dialogWidth: dialogWidth,
+        dialogTitle: dialogTitle,
+        bgColor: bgColor,
+        shape: shape,
+        maxRatio: maxRatio,
+        enableDrag: enableDrag,
+        barrierDismissible: barrierDismissible);
   }
 
   bool isShow(Key key) => keyCache.contains(key);
