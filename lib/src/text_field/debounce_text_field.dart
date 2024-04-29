@@ -6,13 +6,18 @@ class DeBounceTextFormField extends StatefulWidget {
   final Duration deBounceTime;
   final TextEditingController controller;
   final InputDecoration? decoration;
-  final void Function(String)? onChanged;
+  final void Function(String value)? onChanged;
+  final void Function(String value)? onDeBounceConfirm;
+  final FocusNode? focusNode;
+
   const DeBounceTextFormField({
     super.key,
-    required this.deBounceTime,
+    this.deBounceTime = const Duration(milliseconds: 800),
     required this.controller,
     this.decoration,
     this.onChanged,
+    this.onDeBounceConfirm,
+    this.focusNode,
   });
 
   @override
@@ -24,14 +29,16 @@ class _DeBounceTextFormFieldState extends State<DeBounceTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+        focusNode: widget.focusNode,
         onChanged: (value) {
+          widget.onChanged?.call(value);
           if (_debounce?.isActive ?? false) {
             _debounce?.cancel();
           }
           _debounce = Timer(widget.deBounceTime, () {
             widget.controller.text = value;
-            widget.onChanged?.call(value);
+            widget.onDeBounceConfirm?.call(value);
           });
         },
         decoration: widget.decoration);
