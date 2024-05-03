@@ -3,7 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'auto_size_draggle_able_widget.dart';
 
-enum DialogStyle { dialog, bottomSheet }
+Color dialogBackgroundColor = Colors.transparent;
+Color bottomSheetBackgroundColor = Colors.transparent;
+
+enum DialogStyle {
+  dialog,
+  bottomSheet;
+
+  const DialogStyle();
+}
 
 enum ChildType {
   none,
@@ -91,7 +99,7 @@ abstract class BaseDialogBuilder {
               constrainedAxis: Axis.vertical,
               child: Dialog(
                 insetPadding: EdgeInsets.zero,
-                backgroundColor: bgColor,
+                backgroundColor: bgColor ?? dialogBackgroundColor,
                 shape: shape,
                 child: Container(
                     constraints: BoxConstraints(
@@ -117,7 +125,7 @@ abstract class BaseDialogBuilder {
       context: context,
       builder: (_context) {
         return AutoSizeDraggleAbleWidget(
-            backgroundColor: bgColor ?? Theme.of(context).backgroundColor,
+            backgroundColor: bgColor ?? bottomSheetBackgroundColor,
             shape: shape,
             child: SingleChildScrollView(child: child));
       },
@@ -207,6 +215,14 @@ extension CustomersDialog on DialogStyle {
   }
 
   bool isShow(Key key) => keyCache.contains(key);
+
+  void setBgColor(Color bgColor) {
+    if (this == DialogStyle.dialog) {
+      dialogBackgroundColor = bgColor;
+    } else {
+      bottomSheetBackgroundColor = bgColor;
+    }
+  }
 }
 
 class CommonDialogBuilder extends BaseDialogBuilder {
