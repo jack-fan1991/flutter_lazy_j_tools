@@ -177,6 +177,9 @@ class _DragResizableDividerRowState extends State<DragResizableDividerRow> {
   }
 }
 
+/// Make sure child is infinite height
+/// If use column warp column with [SingleChildScrollView]
+/// Or else use [ListView.builder]
 class DragResizableDividerColumn extends StatefulWidget {
   final double defaultHeight;
   final List<double> heightRange;
@@ -239,7 +242,9 @@ class _DragResizableDividerColumnState
                 color: widget.debug ? Colors.blue : widget.backgroundColor,
                 decoration: widget.decoration,
                 padding: widget.padding ?? EdgeInsets.zero,
-                child: SizedBox(height: _defaultHeight, child: widget.child)),
+                child: SizedBox(
+                    height: _defaultHeight,
+                    child: Expanded(child: widget.child))),
             DragResizableDivider(
               draggable: widget.draggable,
               height: widget.height,
