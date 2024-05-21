@@ -30,6 +30,7 @@ class _DeBounceTextFormFieldState extends State<DeBounceTextFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+        controller: widget.controller,
         focusNode: widget.focusNode,
         onChanged: (value) {
           widget.onChanged?.call(value);

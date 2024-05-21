@@ -239,12 +239,14 @@ class _DragResizableDividerColumnState
         return Column(
           children: [
             Container(
-                color: widget.debug ? Colors.blue : widget.backgroundColor,
-                decoration: widget.decoration,
-                padding: widget.padding ?? EdgeInsets.zero,
-                child: SizedBox(
-                    height: _defaultHeight,
-                    child: Expanded(child: widget.child))),
+              color: widget.debug ? Colors.blue : widget.backgroundColor,
+              decoration: widget.decoration,
+              padding: widget.padding ?? EdgeInsets.zero,
+              child: SizedBox(
+                height: _defaultHeight,
+                child: widget.child,
+              ),
+            ),
             DragResizableDivider(
               draggable: widget.draggable,
               height: widget.height,
