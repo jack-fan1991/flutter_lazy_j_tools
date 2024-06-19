@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_lazy_j_tools/src/debouncer/debouncer.dart';
 
 class DeBounceTextFormField extends StatefulWidget {
   final Duration deBounceTime;
@@ -25,7 +26,13 @@ class DeBounceTextFormField extends StatefulWidget {
 }
 
 class _DeBounceTextFormFieldState extends State<DeBounceTextFormField> {
-  Timer? _debounce;
+  late final Debouncer _debounce;
+
+  @override
+  void initState() {
+    _debounce = Debouncer(delay: widget.deBounceTime);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +41,7 @@ class _DeBounceTextFormFieldState extends State<DeBounceTextFormField> {
         focusNode: widget.focusNode,
         onChanged: (value) {
           widget.onChanged?.call(value);
-          if (_debounce?.isActive ?? false) {
-            _debounce?.cancel();
-          }
-          _debounce = Timer(widget.deBounceTime, () {
+          _debounce.run(() {
             widget.controller.text = value;
             widget.onDeBounceConfirm?.call(value);
           });
