@@ -8,6 +8,17 @@ extension IterableHelper<E> on Iterable<E> {
     if (orElse != null) return orElse();
     return null;
   }
+
+  String maybeValueOf(
+    int index, {
+    required String Function() orElse,
+  }) {
+    if (index >= 0 && index < length) {
+      return elementAt(index).toString();
+    } else {
+      return orElse();
+    }
+  }
 }
 
 extension DuplicateOfIterable on Iterable {
