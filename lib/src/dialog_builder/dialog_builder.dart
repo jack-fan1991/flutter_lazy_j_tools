@@ -115,6 +115,70 @@ abstract class BaseDialogBuilder {
     return result;
   }
 
+  void buildOverlayDialog({
+    required BuildContext context,
+    bool showCloseButton = false,
+  }) {
+    final overlay = Overlay.of(context);
+    late OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) => Positioned.fill(
+        child: GestureDetector(
+          onTap: () {
+            overlayEntry.remove(); // 點擊背景時關閉對話框
+          },
+          child: Container(
+            color: Colors.black87,
+            child: Stack(
+              children: [
+                Center(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Dialog(
+                      insetPadding: EdgeInsets.zero,
+                      backgroundColor: bgColor ?? dialogBackgroundColor,
+                      shape: shape,
+                      child: Container(
+                        constraints: BoxConstraints(
+                          maxWidth:
+                              MediaQuery.of(context).size.width * maxRatio,
+                          maxHeight:
+                              MediaQuery.of(context).size.height * maxRatio,
+                        ),
+                        width: childType == ChildType.fitChild
+                            ? null
+                            : dialogWidth,
+                        height: childType == ChildType.fitChild
+                            ? null
+                            : dialogHeight,
+                        child: child,
+                      ),
+                    ),
+                  ),
+                ),
+                if (showCloseButton)
+                  Positioned(
+                    top: 16.0,
+                    right: 16.0,
+                    child: IconButton(
+                      icon: const Icon(Icons.close,
+                          color: Colors.white), // "X" 按鈕
+                      onPressed: () {
+                        overlayEntry.remove(); // 點擊 "X" 按鈕時關閉對話框
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+  }
+
   buildBottomSheet() async {
     return showModalBottomSheet(
       isScrollControlled: true,
@@ -132,7 +196,11 @@ abstract class BaseDialogBuilder {
     );
   }
 
-  Future<T?> show<T>({required DialogStyle dialogStyle}) async {
+  show<T>({
+    required BuildContext context,
+    required DialogStyle dialogStyle,
+    bool showCloseButton = false,
+  }) async {
     T? result;
     final k = key ?? child.key;
     if (keyCache.contains(key)) {
@@ -143,7 +211,10 @@ abstract class BaseDialogBuilder {
     }
     switch (dialogStyle) {
       case DialogStyle.dialog:
-        result = await buildDialog();
+        buildOverlayDialog(
+          context: context,
+          showCloseButton: showCloseButton,
+        );
         break;
       case DialogStyle.bottomSheet:
         result = await buildBottomSheet();
@@ -159,18 +230,20 @@ final keyCache = <Key>{};
 extension CustomersDialog on DialogStyle {
   /// If [key] !=null or [child] has a key,
   /// it will be cached, and the same key will not be displayed repeatedly
-  Future<T?> show<T>(
-      {required context,
-      required Widget child,
-      Key? key,
-      double? dialogHeight,
-      double? dialogWidth,
-      String? dialogTitle,
-      Color? bgColor,
-      ShapeBorder? shape,
-      double? maxRatio,
-      bool? enableDrag,
-      bool? barrierDismissible}) async {
+  Future<T?> show<T>({
+    required context,
+    required Widget child,
+    Key? key,
+    double? dialogHeight,
+    double? dialogWidth,
+    String? dialogTitle,
+    Color? bgColor,
+    ShapeBorder? shape,
+    double? maxRatio,
+    bool? enableDrag,
+    bool? barrierDismissible,
+    bool showCloseButton = false,
+  }) async {
     final builder = CommonDialogBuilder(
         context: context,
         key: key,
@@ -183,35 +256,43 @@ extension CustomersDialog on DialogStyle {
         barrierDismissible: barrierDismissible)
       ..setMaxRatio(maxRatio ?? 0.8)
       ..setShape(shape);
-    return await builder.show<T>(dialogStyle: this);
+    return await builder.show<T>(
+      context: context,
+      dialogStyle: this,
+      showCloseButton: showCloseButton,
+    );
   }
 
   /// If [key] !=null or [child] has a key,
   /// it will be cached, and the same key will not be displayed repeatedly
-  Future<T?> showAsSingleton<T>(
-      {required context,
-      required Widget child,
-      required Key? key,
-      double? dialogHeight,
-      double? dialogWidth,
-      String? dialogTitle,
-      Color? bgColor,
-      ShapeBorder? shape,
-      double? maxRatio,
-      bool? enableDrag,
-      bool? barrierDismissible}) async {
+  Future<T?> showAsSingleton<T>({
+    required context,
+    required Widget child,
+    required Key? key,
+    double? dialogHeight,
+    double? dialogWidth,
+    String? dialogTitle,
+    Color? bgColor,
+    ShapeBorder? shape,
+    double? maxRatio,
+    bool? enableDrag,
+    bool? barrierDismissible,
+    bool showCloseButton = false,
+  }) async {
     return await show<T>(
-        context: context,
-        child: child,
-        key: key,
-        dialogHeight: dialogHeight,
-        dialogWidth: dialogWidth,
-        dialogTitle: dialogTitle,
-        bgColor: bgColor,
-        shape: shape,
-        maxRatio: maxRatio,
-        enableDrag: enableDrag,
-        barrierDismissible: barrierDismissible);
+      context: context,
+      child: child,
+      key: key,
+      dialogHeight: dialogHeight,
+      dialogWidth: dialogWidth,
+      dialogTitle: dialogTitle,
+      bgColor: bgColor,
+      shape: shape,
+      maxRatio: maxRatio,
+      enableDrag: enableDrag,
+      barrierDismissible: barrierDismissible,
+      showCloseButton: showCloseButton,
+    );
   }
 
   bool isShow(Key key) => keyCache.contains(key);

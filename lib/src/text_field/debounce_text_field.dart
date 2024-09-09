@@ -42,7 +42,7 @@ class _DeBounceTextFormFieldState extends State<DeBounceTextFormField> {
         onChanged: (value) {
           widget.onChanged?.call(value);
           _debounce.run(() {
-            widget.controller.text = value;
+            // widget.controller.text = value;
             widget.onDeBounceConfirm?.call(value);
           });
         },
